@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
+	<meta charset="UTF-8">
     <title>Flask-SocketIO Test</title>
     <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
@@ -29,9 +30,17 @@
             // The callback function is invoked whenever the server emits data
             // to the client. The data is then displayed in the "Received"
             // section of the page.
-            socket.on('my_response', function(msg) {
-                $('#log').append('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
-            });
+//            socket.on('my_response', function(msg) {
+//                $('#log').append('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
+//            });
+// Translated the above 3 lines from jQuery to vanilla JavaScript (which takes 7 lines, but shows what jQuery was simplifying)
+			socket.on('my_response', function(msg) {
+				const log = document.getElementById('log');
+				const newDiv = document.createElement('div');
+				const newMessage = document.createTextNode('Received #' + msg.count + ': ' + msg.data);
+				newDiv.appendChild(newMessage);
+				log.appendChild(newDiv);
+			});
 
             // Handlers for the different forms in the page.
             // These accept data from the user and send it to the server in a
