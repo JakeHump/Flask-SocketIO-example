@@ -2,39 +2,49 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-    <title>Flask-SocketIO Test</title>
-    <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
-    <script type="text/javascript" charset="utf-8">
-        $(document).ready(function() {
-            // Use a "/test" namespace.
-            // An application can open a connection on multiple namespaces, and
-            // Socket.IO will multiplex all those connections on a single
-            // physical channel. If you don't care about multiple channels, you
-            // can set the namespace to an empty string.
-            namespace = '/test';
+	<title>Flask-SocketIO Test</title>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+	<script type="text/javascript" charset="utf-8">
+//		$(document).ready(function() {	// jQuery function to run subsequent code once the DOM is loaded
+//		window.onload = function(){	// vanilla JavaScript function to run subsequent code once the DOM is loaded
+		document.addEventListener('DOMContentLoaded', () => {	// ES6 arrow function to run subsequent code once the DOM is loaded
+			// Use a "/test" namespace.
+			// An application can open a connection on multiple namespaces, and
+			// Socket.IO will multiplex all those connections on a single
+			// physical channel. If you don't care about multiple channels, you
+			// can set the namespace to an empty string.
+			namespace = '/test';
 
-            // Connect to the Socket.IO server.
-            // The connection URL has the following format:
-            //     http[s]://<domain>:<port>[/<namespace>]
-            var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+			// Connect to the Socket.IO server.
+			// The connection URL has the following format:
+			//     http[s]://<domain>:<port>[/<namespace>]
+			const socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace); // This works with var, let, or const--const has the most contained scope, so we should prefer it since greater scope/mutability is unnecessary
 
-            // Event handler for new connections.
-            // The callback function is invoked when a connection with the
-            // server is established.
-            socket.on('connect', function() {
-                socket.emit('my_event', {data: 'I\'m connected!'});
-            });
+			// Event handler for new connections.
+			// The callback function is invoked when a connection with the
+			// server is established.
+			socket.on('connect', function() {
+				socket.emit('my_event', {data: 'I\'m connected!'});
+				console.log("Send emission to server: 'my_event: I'm connected!'");
+			});
 
-            // Event handler for server sent data.
-            // The callback function is invoked whenever the server emits data
-            // to the client. The data is then displayed in the "Received"
-            // section of the page.
-//            socket.on('my_response', function(msg) {
-//                $('#log').append('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
-//            });
-// Translated the above 3 lines from jQuery to vanilla JavaScript (which takes 7 lines, but shows what jQuery was simplifying)
-			socket.on('my_response', function(msg) {
+			// Event handler for server sent data.
+			// The callback function is invoked whenever the server emits data
+			// to the client. The data is then displayed in the "Received"
+			// section of the page.
+//			socket.on('my_response', function(msg) {	// jQuery function to print emissions received from the server to the page
+//				$('#log').append('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
+//			});
+
+//			socket.on('my_response', function(msg) {	// vanilla JavaScript function to print emissions received from the server to the page
+//				const log = document.getElementById('log');
+//				const newDiv = document.createElement('div');
+//				const newMessage = document.createTextNode('Received #' + msg.count + ': ' + msg.data);
+//				newDiv.appendChild(newMessage);
+//				log.appendChild(newDiv);
+//			});
+
+			socket.on('my_response', (msg) => {	// ES6 arrow function to print emissions received from the server to the page
 				const log = document.getElementById('log');
 				const newDiv = document.createElement('div');
 				const newMessage = document.createTextNode('Received #' + msg.count + ': ' + msg.data);
@@ -42,31 +52,71 @@
 				log.appendChild(newDiv);
 			});
 
-            // Handlers for the different forms in the page.
-            // These accept data from the user and send it to the server in a
-            // variety of ways
-            $('form#join').submit(function(event) {
-                socket.emit('join', {room: $('#join_room').val()});
-                return false;
-            });
-            $('form#leave').submit(function(event) {
-                socket.emit('leave', {room: $('#leave_room').val()});
-                return false;
-            });
-            $('form#send_room').submit(function(event) {
-                socket.emit('my_room_event', {room: $('#room_name').val(), data: $('#room_data').val()});
-                return false;
-            });
-            $('form#close').submit(function(event) {
-                socket.emit('close_room', {room: $('#close_room').val()});
-                return false;
-            });
-            $('form#disconnect').submit(function(event) {
-                socket.emit('disconnect_request');
-                return false;
-            });
-        });
-    </script>
+			// Handlers for the different forms in the page.
+			// These accept data from the user and send it to the server in a
+			// variety of ways
+//			$('form#join').submit(function(event) {	// jQuery function to emit join room request to server
+//				socket.emit('join', {room: $('#join_room').val()});
+//				return false;
+//			});
+
+//			document.getElementById('join').addEventListener('click', function(event) {	// vanilla JavaScript function to emit join room request to server
+//				socket.emit('join', {room: document.getElementById('join_room').value});
+//				event.preventDefault();
+//			});
+
+			document.getElementById('join').addEventListener('click', (event) => {	// ES6 arrow function to emit join room request to server
+				socket.emit('join', {room: document.getElementById('join_room').value});
+				event.preventDefault();
+				console.log("Send emission to server: 'join, {room: " + document.getElementById('join_room').value + "}'");
+			});
+
+//			$('form#leave').submit(function(event) {	// jQuery function to emit leave room request to server
+//				socket.emit('leave', {room: $('#leave_room').val()});
+//				return false;
+//			});
+
+			document.getElementById('leave').addEventListener('click', (event) => {	// ES6 arrow function to emit leave room request to server
+				socket.emit('leave', {room: document.getElementById('leave_room').value});
+				event.preventDefault();
+				console.log("Send emission to server: 'leave, {room: " + document.getElementById('leave_room').value + "}'");
+			});
+
+//			$('form#send_room').submit(function(event) {	// jQuery function to emit a message to a specific room via the server
+//				socket.emit('my_room_event', {room: $('#room_name').val(), data: $('#room_data').val()});
+//				return false;
+//			});
+
+			document.getElementById('send_room').addEventListener('click', (event) => {	// ES6 arrow function to emit a message to a specific room via the server
+				socket.emit('my_room_event', {room: document.getElementById('room_name').value, data: document.getElementById('room_data').value});
+				event.preventDefault();
+				console.log("Send emission to server: 'my_room_event, {room: " + document.getElementById('room_name').value + ", data: " + document.getElementById('room_data').value + "}'");
+			});
+
+//			$('form#close').submit(function(event) {	// jQuery function to emit a close room request to server
+//				socket.emit('close_room', {room: $('#close_room').val()});
+//				return false;
+//			});
+
+			document.getElementById('close').addEventListener('click', (event) => {	// ES6 arrow function to emit a close_room request to server
+				socket.emit('close_room', {room: document.getElementById('close_room').value});
+				event.preventDefault();
+				console.log("Send emission to server: 'close_room, {room: " + document.getElementById('close_room').value + "}'");
+			});
+
+//			$('form#disconnect').submit(function(event) {	// jQuery function to emit a disconnect request to server
+//				socket.emit('disconnect_request');
+//				return false;
+//			});
+
+			document.getElementById('disconnect').addEventListener('click', (event) => {	// ES6 arrow function to emit a disconnect request to server
+				socket.emit('disconnect_request');
+				event.preventDefault();
+				console.log("Send emission to server: 'disconnect_request'");
+			});
+
+		});	// End of our JavaScript code--this line is the same regardless of which wrapping syntax, jQuery, old vanilla JavaScript, or arrow syntax, we use
+	</script>
 </head>
 <body>
     <h1>Flask-SocketIO Test</h1>
